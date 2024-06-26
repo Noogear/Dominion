@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.dominion.managers.GlobalTeleport;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
@@ -65,7 +66,7 @@ public class Cache {
                 id_dominions = new ConcurrentHashMap<>();
                 world_dominion_tree = new ConcurrentHashMap<>();
                 dominion_children = new ConcurrentHashMap<>();
-                List<DominionDTO> dominions = DominionDTO.selectAll();
+                List<DominionDTO> dominions = DominionDTO.selectAllOfServer(GlobalTeleport.instance.getThisServerId());
                 count = dominions.size();
                 Map<String, List<DominionDTO>> world_dominions = new HashMap<>();
                 for (DominionDTO d : dominions) {

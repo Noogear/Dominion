@@ -28,20 +28,8 @@ public class ServerInfoDTO {
         return (String) name.value;
     }
 
-    private static void initTable() {
-        TableColumn server_info_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
-        TableColumn server_info_name = new TableColumn("name", FieldType.STRING, false, false, true, false, "server");
-        CreateTable privilege_template = new CreateTable().ifNotExists();
-        privilege_template.table("server_info")
-                .field(server_info_id)
-                .field(server_info_name);
-        privilege_template.execute();
-    }
-
 
     public static ServerInfoDTO initServerInfo(JavaPlugin plugin, File se) {
-        initTable();
-
         ServerInfoDTO serverInfoDTO = new ServerInfoDTO();
         serverInfoDTO.name.value = plugin.getServer().getName();
         InsertRow insertRow = new InsertRow();

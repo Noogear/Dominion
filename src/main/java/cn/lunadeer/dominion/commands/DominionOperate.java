@@ -7,6 +7,7 @@ import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.dominion.managers.GlobalTeleport;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.Teleport;
@@ -15,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -22,6 +24,7 @@ import java.util.Map;
 import static cn.lunadeer.dominion.DominionNode.isInDominion;
 import static cn.lunadeer.dominion.commands.Apis.autoPoints;
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.managers.GlobalTeleport.doTp;
 
 public class DominionOperate {
     /**
@@ -357,16 +360,7 @@ public class DominionOperate {
         }
         if (player.isOp() && Dominion.config.getLimitOpBypass()) {
             Notification.warn(sender, "你是OP，将忽略领地传送限制");
-            Location location = dominionDTO.getTpLocation();
-            if (location == null) {
-                int x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
-                int z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
-                World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
-                location = new Location(world, x, player.getLocation().getY(), z);
-                XLogger.warn("领地 %s 没有设置传送点，将尝试传送到中心点", dominionDTO.getName());
-            }
-            Teleport.doTeleportSafely(player, location);
-            Notification.info(player, "已将你传送到 " + dominionDTO.getName());
+            doTp(player, dominionDTO);
             return;
         }
         if (!Dominion.config.getTpEnable()) {
@@ -418,26 +412,7 @@ public class DominionOperate {
         }
         Cache.instance.NextTimeAllowTeleport.put(player.getUniqueId(), now.plusSeconds(Dominion.config.getTpCoolDown()));
         Scheduler.runTaskLater(() -> {
-            Location location = dominionDTO.getTpLocation();
-            int center_x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
-            int center_z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
-            World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
-            if (location == null) {
-                location = new Location(world, center_x, player.getLocation().getY(), center_z);
-                XLogger.warn("领地 %s 没有设置传送点，将尝试传送到中心点", dominionDTO.getName());
-            } else if (!isInDominion(dominionDTO, location)) {
-                location = new Location(world, center_x, player.getLocation().getY(), center_z);
-                XLogger.warn("领地 %s 传送点不在领地内，将尝试传送到中心点", dominionDTO.getName());
-            }
-            if (player.isOnline()) {
-                Teleport.doTeleportSafely(player, location).thenAccept(b -> {
-                    if (b) {
-                        Notification.info(player, "已将你传送到 " + dominionDTO.getName());
-                    } else {
-                        Notification.error(player, "传送失败，请重试");
-                    }
-                });
-            }
+            doTp(player, dominionDTO);
         }, 20L * Dominion.config.getTpDelay());
     }
 

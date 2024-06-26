@@ -1,6 +1,8 @@
 package cn.lunadeer.dominion.managers;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.FieldType;
 import cn.lunadeer.minecraftpluginutils.databse.TableColumn;
@@ -155,5 +157,25 @@ public class DatabaseTables {
         // 1.31.6
         TableColumn dominion_color = new TableColumn("color", FieldType.STRING, false, false, true, false, "'#00BFFF'");
         new AddColumn(dominion_color).table("dominion").ifNotExists().execute();
+
+        // global teleport
+        TableColumn server_info_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
+        TableColumn server_info_name = new TableColumn("name", FieldType.STRING, false, false, true, false, "server");
+        CreateTable server_info = new CreateTable().ifNotExists();
+        server_info.table("server_info")
+                .field(server_info_id)
+                .field(server_info_name);
+        server_info.execute();
+        new GlobalTeleport(Dominion.instance);  // init server info
+        TableColumn server_id = new TableColumn("server_id", FieldType.INT, false, false, true, false, GlobalTeleport.instance.getThisServerId());
+        new AddColumn(server_id).table("dominion").ifNotExists().execute();
+
+        TableColumn bc_tp_cache_player_uuid = new TableColumn("player_uuid", FieldType.STRING, false, false, true, true, "''");
+        TableColumn bc_tp_cache_dom_id = new TableColumn("dom_id", FieldType.INT, false, false, true, false, -1);
+        CreateTable bc_tp_cache = new CreateTable().ifNotExists();
+        bc_tp_cache.table("bc_tp_cache")
+                .field(bc_tp_cache_player_uuid)
+                .field(bc_tp_cache_dom_id);
+        bc_tp_cache.execute();
     }
 }

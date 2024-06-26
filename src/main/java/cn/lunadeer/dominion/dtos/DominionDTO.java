@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.managers.GlobalTeleport;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
@@ -47,13 +48,15 @@ public class DominionDTO {
                 flags.put(f, rs.getBoolean(f.getFlagName()));
             }
             String color = rs.getString("color");
+            Integer serverId = rs.getInt("server_id");
 
             DominionDTO dominion = new DominionDTO(id, owner, name, world, x1, y1, z1, x2, y2, z2, parentDomId,
                     rs.getString("join_message"),
                     rs.getString("leave_message"),
                     flags,
                     tp_location,
-                    color
+                    color,
+                    serverId
             );
             dominions.add(dominion);
         }
@@ -63,6 +66,11 @@ public class DominionDTO {
     public static List<DominionDTO> selectAll() {
         String sql = "SELECT * FROM dominion WHERE id > 0;";
         return query(sql);
+    }
+
+    public static List<DominionDTO> selectAllOfServer(Integer id) {
+        String sql = "SELECT * FROM dominion WHERE id > 0 AND server_id = ?;";
+        return query(sql, id);
     }
 
     public static List<DominionDTO> selectAll(String world) {
@@ -123,7 +131,7 @@ public class DominionDTO {
                 .field(dominion.x2).field(dominion.y2).field(dominion.z2)
                 .field(dominion.parentDomId)
                 .field(dominion.joinMessage).field(dominion.leaveMessage)
-                .field(dominion.tp_location);
+                .field(dominion.tp_location).field(dominion.serverId);
         for (Flag f : Flag.getDominionFlagsEnabled()) {
             insert.field(new Field(f.getFlagName(), f.getDefaultValue()));
         }
@@ -150,7 +158,7 @@ public class DominionDTO {
                         String joinMessage, String leaveMessage,
                         Map<Flag, Boolean> flags,
                         String tp_location,
-                        String color) {
+                        String color, Integer serverId) {
         this.id.value = id;
         this.owner.value = owner.toString();
         this.name.value = name;
@@ -167,6 +175,7 @@ public class DominionDTO {
         this.flags.putAll(flags);
         this.tp_location.value = tp_location;
         this.color.value = color;
+        this.serverId.value = serverId;
     }
 
 
@@ -207,7 +216,7 @@ public class DominionDTO {
     private final Map<Flag, Boolean> flags = new HashMap<>();
     private final Field tp_location = new Field("tp_location", "default");
     private final Field color = new Field("color", "#00BFFF");
-
+    private final Field serverId = new Field("server_id", GlobalTeleport.instance.getThisServerId());
 
     // getters and setters
     public Integer getId() {
@@ -422,5 +431,13 @@ public class DominionDTO {
 
     public String getColor() {
         return (String) color.value;
+    }
+
+    public Integer getServerId() {
+        return (Integer) serverId.value;
+    }
+
+    public String getServerName() {
+        return GlobalTeleport.instance.getServerName(getServerId());
     }
 }
