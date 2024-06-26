@@ -160,7 +160,7 @@ public class DatabaseTables {
 
         // global teleport
         TableColumn server_info_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
-        TableColumn server_info_name = new TableColumn("name", FieldType.STRING, false, false, true, false, "server");
+        TableColumn server_info_name = new TableColumn("name", FieldType.STRING, false, false, true, false, "'server'");
         CreateTable server_info = new CreateTable().ifNotExists();
         server_info.table("server_info")
                 .field(server_info_id)
