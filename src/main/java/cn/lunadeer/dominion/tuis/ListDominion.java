@@ -41,6 +41,9 @@ public class ListDominion {
             view.add(Line.create().append(manage).append(dominion));
         }
         for (Integer serverId : GlobalTeleport.instance.getAllServerInfo().keySet()) {
+            if (serverId == GlobalTeleport.instance.getThisServerId()) {
+                continue;
+            }
             List<String> names = DominionDTO.selectAllNamesOfServer(serverId, player.getUniqueId());
             if (names.size() == 0) continue;
             view.add(Line.create().append(""));

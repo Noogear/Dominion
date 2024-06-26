@@ -34,6 +34,7 @@ public class ServerInfoDTO {
         serverInfoDTO.name.value = plugin.getServer().getName();
         InsertRow insertRow = new InsertRow();
         insertRow.returningAll()
+                .onConflictDoNothing(new Field("id", null))
                 .field(serverInfoDTO.name)
                 .table("server_info");
         try (ResultSet res = insertRow.execute()) {
