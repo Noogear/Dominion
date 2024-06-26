@@ -1,15 +1,12 @@
 package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.dtos.ServerInfoDTO;
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 public class GlobalTeleport implements PluginMessageListener {
@@ -17,21 +14,30 @@ public class GlobalTeleport implements PluginMessageListener {
     public static GlobalTeleport instance;
 
     private final JavaPlugin plugin;
-    private final File infoFile;
-    private ServerInfoDTO thisServerInfo;
-    private Map<Integer, ServerInfoDTO> allServerInfo = new HashMap<>();
+    private final ServerInfoDTO thisServerInfo;
+    private final Map<Integer, String> allServerInfo;
 
     public GlobalTeleport(JavaPlugin plugin) {
         this.plugin = plugin;
+        File infoFile = new File(plugin.getDataFolder(), "server_info.json");
         this.plugin.getServer().getMessenger().registerOutgoingPluginChannel(this.plugin, "BungeeCord");
         this.plugin.getServer().getMessenger().registerIncomingPluginChannel(this.plugin, "BungeeCord", this);
-        this.infoFile = new File(plugin.getDataFolder(), "server_info.json");
         instance = this;
 
         if (!infoFile.exists()) {
-            ServerInfoDTO.initServerInfo();
+            thisServerInfo = ServerInfoDTO.initServerInfo(plugin, infoFile);
+        } else {
+            thisServerInfo = ServerInfoDTO.updateServerInfo(plugin, infoFile);
         }
-        // todo load & update info
+        allServerInfo = ServerInfoDTO.getAllServerInfo();
+    }
+
+    public String getThisServerName() {
+        return thisServerInfo.getName();
+    }
+
+    public String getServerName(int id) {
+        return allServerInfo.get(id);
     }
 
     /**
@@ -44,14 +50,6 @@ public class GlobalTeleport implements PluginMessageListener {
      */
     @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
-        if (!channel.equals("BungeeCord")) {
-            return;
-        }
-        ByteArrayDataInput in = ByteStreams.newDataInput(message);
-        String subchannel = in.readUTF();
-        if (subchannel.equals("SomeSubChannel")) {
-            // 使用下文中的"返回（Response）"一节的代码进行读取
-            // 数据处理
-        }
+
     }
 }
