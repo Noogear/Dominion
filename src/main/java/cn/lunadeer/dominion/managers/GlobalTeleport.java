@@ -65,6 +65,10 @@ public class GlobalTeleport implements PluginMessageListener, Listener {
         return allServerInfo.get(id);
     }
 
+    public Map<Integer, String> getAllServerInfo() {
+        return allServerInfo;
+    }
+
     /**
      * A method that will be thrown when a PluginMessageSource sends a plugin
      * message on a registered channel.
@@ -113,7 +117,9 @@ public class GlobalTeleport implements PluginMessageListener, Listener {
         if (dominionDTO == null) {
             Notification.error(player, "无法获取目标领地信息");
         } else {
-            doTp(player, dominionDTO);
+            if (dominionDTO.getServerId() == getThisServerId()) {
+                doTp(player, dominionDTO);
+            }
         }
         sql = "DELETE FROM bc_tp_cache WHERE player_uuid = ?";
         DatabaseManager.instance.query(sql, player.getUniqueId().toString());

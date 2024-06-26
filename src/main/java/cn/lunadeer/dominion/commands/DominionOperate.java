@@ -353,7 +353,11 @@ public class DominionOperate {
             Notification.error(sender, "用法: /dominion tp <领地名称>");
             return;
         }
-        DominionDTO dominionDTO = DominionDTO.select(args[1]);
+        String name = args[1];
+        if (name.contains(".")) {
+            name = name.split("\\.")[1];
+        }
+        DominionDTO dominionDTO = DominionDTO.select(name);
         if (dominionDTO == null) {
             Notification.error(sender, "领地不存在");
             return;

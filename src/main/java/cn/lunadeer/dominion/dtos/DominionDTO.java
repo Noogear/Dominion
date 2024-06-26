@@ -68,6 +68,39 @@ public class DominionDTO {
         return query(sql);
     }
 
+    public static List<String> selectAllNamesOfServer(Integer serverId, UUID owner) {
+        String sql = "SELECT name FROM dominion WHERE server_id = ? AND id > 0 AND owner = ?;";
+        List<String> names = new ArrayList<>();
+        try (ResultSet rs = DatabaseManager.instance.query(sql, serverId, owner.toString())) {
+            if (rs == null) return names;
+            while (rs.next()) {
+                names.add(rs.getString("name"));
+            }
+        } catch (SQLException e) {
+            DatabaseManager.handleDatabaseError("数据库操作失败: ", e, sql);
+        }
+        return names;
+    }
+
+    public static List<String> selectAllNames() {
+        String sql = "SELECT name, server_id FROM dominion WHERE id > 0;";
+        List<String> names = new ArrayList<>();
+        try (ResultSet rs = DatabaseManager.instance.query(sql)) {
+            if (rs == null) return names;
+            while (rs.next()) {
+                int serverId = rs.getInt("server_id");
+                String name = rs.getString("name");
+                if (serverId != GlobalTeleport.instance.getThisServerId()) {
+                    name = GlobalTeleport.instance.getServerName(serverId) + "." + name;
+                }
+                names.add(name);
+            }
+        } catch (SQLException e) {
+            DatabaseManager.handleDatabaseError("数据库操作失败: ", e, sql);
+        }
+        return names;
+    }
+
     public static List<DominionDTO> selectAllOfServer(Integer id) {
         String sql = "SELECT * FROM dominion WHERE id > 0 AND server_id = ?;";
         return query(sql, id);

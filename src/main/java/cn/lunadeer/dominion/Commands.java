@@ -3,6 +3,7 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.commands.*;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.cuis.*;
+import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.tuis.*;
 import org.bukkit.command.Command;
@@ -267,7 +268,7 @@ public class Commands implements TabExecutor {
                 case "set_tp_location":
                     return playerDominions(sender);
                 case "tp":
-                    return allDominions();
+                    return DominionDTO.selectAllNames();
                 case "set":
                     return dominionFlags();
                 case "create_privilege":

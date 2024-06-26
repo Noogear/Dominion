@@ -2,6 +2,8 @@ package cn.lunadeer.dominion.tuis;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.DominionNode;
+import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.GlobalTeleport;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.ViewStyles;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -13,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.commands.Helper.playerAdminDominions;
@@ -36,6 +39,17 @@ public class ListDominion {
         for (String dominion : admin_dominions) {
             TextComponent manage = Button.createGreen("管理").setExecuteCommand("/dominion manage " + dominion).build();
             view.add(Line.create().append(manage).append(dominion));
+        }
+        for (Integer serverId : GlobalTeleport.instance.getAllServerInfo().keySet()) {
+            List<String> names = DominionDTO.selectAllNamesOfServer(serverId, player.getUniqueId());
+            if (names.size() == 0) continue;
+            view.add(Line.create().append(""));
+            view.add(Line.create().append(Component.text("--- 以下为你在 " + GlobalTeleport.instance.getAllServerInfo().get(serverId) + " 的领地 ---", ViewStyles.main_color)));
+            for (String name : names) {
+                TextComponent manage = Button.createGreen("管理").setExecuteCommand("/dominion manage " + name).build();
+                TextComponent delete = Button.createRed("删除").setExecuteCommand("/dominion delete " + name).build();
+                view.add(Line.create().append(delete).append(manage).append(name));
+            }
         }
         view.showOn(player, page);
     }

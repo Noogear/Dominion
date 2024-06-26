@@ -27,10 +27,6 @@ public class DominionController {
         return DominionDTO.selectAll(owner.getUniqueId());
     }
 
-    public static List<DominionDTO> all() {
-        return DominionDTO.selectAll();
-    }
-
     /**
      * 创建领地
      *
@@ -67,8 +63,8 @@ public class DominionController {
             operator.setResponse(FAIL.addMessage("领地名称不能为空"));
             return;
         }
-        if (name.contains(" ")) {
-            operator.setResponse(FAIL.addMessage("领地名称不能包含空格"));
+        if (name.contains(" ") || name.contains(".")) {
+            operator.setResponse(FAIL.addMessage("领地名称不能包含空格或点"));
             return;
         }
         if (DominionDTO.select(name) != null) {
@@ -579,8 +575,8 @@ public class DominionController {
             operator.setResponse(FAIL.addMessage("新名称不能为空"));
             return;
         }
-        if (new_name.contains(" ")) {
-            operator.setResponse(FAIL.addMessage("领地名称不能包含空格"));
+        if (new_name.contains(" ") || new_name.contains(".")) {
+            operator.setResponse(FAIL.addMessage("领地名称不能包含空格或点"));
             return;
         }
         if (Objects.equals(old_name, new_name)) {

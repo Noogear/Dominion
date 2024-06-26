@@ -67,15 +67,6 @@ public class Helper {
         return dominions_name;
     }
 
-    public static List<String> allDominions() {
-        List<String> dominions_name = new ArrayList<>();
-        List<DominionDTO> dominions = DominionController.all();
-        for (DominionDTO dominion : dominions) {
-            dominions_name.add(dominion.getName());
-        }
-        return dominions_name;
-    }
-
     public static List<String> allTemplates(CommandSender sender) {
         List<String> templates_name = new ArrayList<>();
         Player player = playerOnly(sender);
