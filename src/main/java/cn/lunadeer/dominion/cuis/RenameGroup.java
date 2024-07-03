@@ -1,9 +1,9 @@
 package cn.lunadeer.dominion.cuis;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.controllers.DominionController;
+import cn.lunadeer.dominion.controllers.GroupController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.tuis.dominion.DominionManage;
+import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupSetting;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
@@ -12,23 +12,26 @@ import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 
-public class EditLeaveMessage {
+public class RenameGroup {
 
-    private static class editLeaveMessageCB implements CuiTextInput.InputCallback {
+    private static class renameGroupCB implements CuiTextInput.InputCallback {
+
         private final Player sender;
         private final String dominionName;
+        private final String oldName;
 
-        public editLeaveMessageCB(Player sender, String dominionName) {
+        public renameGroupCB(Player sender, String dominionName, String oldName) {
             this.sender = sender;
             this.dominionName = dominionName;
+            this.oldName = oldName;
         }
 
         @Override
         public void handleData(String input) {
-            XLogger.debug("editLeaveMessageCB.run: %s", input);
+            XLogger.debug("renameGroupCB.run: %s", input);
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            DominionController.setLeaveMessage(operator, input, dominionName);
-            DominionManage.show(sender, new String[]{"manage", dominionName});
+            GroupController.renameGroup(operator, dominionName, oldName, input);
+            GroupSetting.show(sender, dominionName, input);
         }
     }
 
@@ -40,9 +43,10 @@ public class EditLeaveMessage {
             Notification.error(sender, "领地不存在");
             return;
         }
-        CuiTextInput.InputCallback editLeaveMessageCB = new editLeaveMessageCB(player, dominion.getName());
-        CuiTextInput view = CuiTextInput.create(editLeaveMessageCB).setText(dominion.getLeaveMessage()).title("编辑离开提示语");
-        view.setSuggestCommand("/dominion set_leave_msg <提示语> [领地名称]");
+        CuiTextInput.InputCallback renameGroupCB = new renameGroupCB(player, dominion.getName(), args[2]);
+        CuiTextInput view = CuiTextInput.create(renameGroupCB).setText(args[2]).title("输入新的权限组名称");
+        view.setSuggestCommand("/dominion group rename <领地名称> <权限组旧名称> <新名称>");
         view.open(player);
     }
+
 }

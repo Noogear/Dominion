@@ -15,13 +15,13 @@ import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.tuis.Apis.getPage;
 import static cn.lunadeer.dominion.tuis.Apis.notOp;
 
-public class DominionConfig {
+public class SysConfig {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (notOp(player)) return;
-        int page = getPage(args);
-        ListView view = ListView.create(10, "/dominion config");
+        int page = getPage(args, 1);
+        ListView view = ListView.create(10, "/dominion sys_config");
         view.title("系统配置");
         view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("系统配置"));
 
@@ -150,6 +150,15 @@ public class DominionConfig {
                     .append(Component.text("    删除/缩小领地退还比例"))
                     .append(NumChanger.create(Dominion.config.getEconomyRefund(), "/dominion set_config economy_refund", 0.01).setPageNumber(page).build());
             view.add(refund);
+        }
+        if (Dominion.config.getResidenceMigration()) {
+            view.add(Line.create()
+                    .append("是否允许从Residence迁移数据")
+                    .append(Button.createGreen("☑").setExecuteCommand("/dominion set_config residence_migration false " + page).build()));
+        } else {
+            view.add(Line.create()
+                    .append("是否允许从Residence迁移数据")
+                    .append(Button.createRed("☐").setExecuteCommand("/dominion set_config residence_migration true " + page).build()));
         }
         view.showOn(player, page);
     }

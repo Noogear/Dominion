@@ -5,7 +5,15 @@ import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.cuis.*;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.tuis.*;
+import cn.lunadeer.dominion.tuis.AllDominion;
+import cn.lunadeer.dominion.tuis.Menu;
+import cn.lunadeer.dominion.tuis.MigrateList;
+import cn.lunadeer.dominion.tuis.SysConfig;
+import cn.lunadeer.dominion.tuis.dominion.DominionList;
+import cn.lunadeer.dominion.tuis.dominion.DominionManage;
+import cn.lunadeer.dominion.tuis.dominion.manage.EnvSetting;
+import cn.lunadeer.dominion.tuis.dominion.manage.GuestSetting;
+import cn.lunadeer.dominion.tuis.dominion.manage.SizeInfo;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -20,24 +28,6 @@ import java.util.List;
 import static cn.lunadeer.dominion.commands.Helper.*;
 
 public class Commands implements TabExecutor {
-    /*
-    创建领地： /dominion create <领地名称>
-    自动创建领地： /dominion auto_create <领地名称>
-    创建子领地： /dominion create_sub <子领地名称> [父领地名称]
-    自动创建子领地： /dominion auto_create_sub <子领地名称> [父领地名称]
-    扩张领地： /dominion expand [大小] [领地名称]
-    缩小领地： /dominion contract [大小] [领地名称]
-    删除领地： /dominion delete <领地名称> [force]
-    设置领地权限： /dominion set <权限名称> <true/false> [领地名称]
-    设置玩家权限： /dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]
-    重置玩家权限： /dominion clear_privilege <玩家名称> [领地名称]
-    创建权限组： /dominion create_group <权限组名称>
-    删除权限组： /dominion delete_group <权限组名称>
-    设置权限组权限： /dominion set_group <权限组名称> <权限名称> <true/false>
-    设置玩家在某个领地归属的权限组： /dominion add_player <玩家名称> <权限组名称> [领地名称]
-    删除玩家在某个领地归属的权限组： /dominion remove_player <玩家名称> <权限组名称> [领地名称]
-     */
-
 
     /**
      * Executes the given command, returning its success.
@@ -62,19 +52,19 @@ public class Commands implements TabExecutor {
                 Menu.show(sender, args);
                 break;
             case "list":
-                ListDominion.show(sender, args);
+                DominionList.show(sender, args);
                 break;
             case "help":
                 cn.lunadeer.dominion.tuis.Apis.printHelp(sender, args);
                 break;
             case "info":
-                DominionSizeInfo.show(sender, args);
+                SizeInfo.show(sender, args);
                 break;
             case "manage":
                 DominionManage.show(sender, args);
                 break;
-            case "flag_info":
-                DominionFlagInfo.show(sender, args);
+            case "guest_setting":
+                GuestSetting.show(sender, args);
                 break;
             case "create":
                 DominionOperate.createDominion(sender, args);
@@ -99,24 +89,6 @@ public class Commands implements TabExecutor {
                 break;
             case "set":
                 DominionFlag.setDominionFlag(sender, args);
-                break;
-            case "create_privilege":
-                PlayerPrivilege.createPlayerPrivilege(sender, args);
-                break;
-            case "set_privilege":
-                PlayerPrivilege.setPlayerPrivilege(sender, args);
-                break;
-            case "clear_privilege":
-                PlayerPrivilege.clearPlayerPrivilege(sender, args);
-                break;
-            case "privilege_list":
-                DominionPrivilegeList.show(sender, args);
-                break;
-            case "privilege_info":
-                PrivilegeInfo.show(sender, args);
-                break;
-            case "select_player_create_privilege":
-                SelectPlayer.show(sender, args);
                 break;
             case "set_enter_msg":
                 DominionOperate.setEnterMessage(sender, args);
@@ -145,8 +117,8 @@ public class Commands implements TabExecutor {
             case "export_mca":
                 Operator.exportMca(sender, args);
                 break;
-            case "config":
-                DominionConfig.show(sender, args);
+            case "sys_config":
+                SysConfig.show(sender, args);
                 break;
             case "set_config":
                 SetConfig.handler(sender, args);
@@ -154,32 +126,27 @@ public class Commands implements TabExecutor {
             case "all_dominion":
                 AllDominion.show(sender, args);
                 break;
-            case "template_list":
-                TemplateList.show(sender, args);
+            case "migrate_list":
+                MigrateList.show(sender, args);
                 break;
-            case "template_manage":
-                TemplateManage.show(sender, args);
-                break;
-            case "template_delete":
-                Template.deleteTemplate(sender, args);
-                break;
-            case "template_create":
-                Template.createTemplate(sender, args);
-                break;
-            case "template_set_flag":
-                Template.setTemplateFlag(sender, args);
-                break;
-            case "apply_template":
-                PlayerPrivilege.applyTemplate(sender, args);
-                break;
-            case "select_template":
-                SelectTemplate.show(sender, args);
+            case "migrate":
+                Migration.migrate(sender, args);
                 break;
             case "set_map_color":
                 DominionOperate.setMapColor(sender, args);
                 break;
-            case "env_info":
-                DominionEnvInfo.show(sender, args);
+            case "env_setting":
+                EnvSetting.show(sender, args);
+                break;
+            // ---===  Sub Command  ===---
+            case "member":
+                Member.handle(sender, args);
+                break;
+            case "group":
+                Group.handle(sender, args);
+                break;
+            case "template":
+                Template.handle(sender, args);
                 break;
             // ---===  CUI  ===---
             case "cui_rename":
@@ -194,14 +161,20 @@ public class Commands implements TabExecutor {
             case "cui_create":
                 CreateDominion.open(sender, args);
                 break;
-            case "cui_create_privilege":
-                CreatePrivilege.open(sender, args);
+            case "cui_member_add":
+                MemberAdd.open(sender, args);
                 break;
             case "cui_template_create":
                 CreateTemplate.open(sender, args);
                 break;
             case "cui_set_map_color":
                 SetMapColor.open(sender, args);
+                break;
+            case "cui_create_group":
+                CreateGroup.open(sender, args);
+                break;
+            case "cui_rename_group":
+                RenameGroup.open(sender, args);
                 break;
             default:
                 return false;
@@ -225,9 +198,8 @@ public class Commands implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("menu", "help", "info", "manage", "flag_info", "privilege_list",
+            return Arrays.asList("menu", "help", "info", "manage", "guest_setting",
                     "create", "auto_create", "create_sub", "auto_create_sub", "expand", "contract", "delete", "set",
-                    "create_privilege", "set_privilege", "clear_privilege", "list", "privilege_info",
                     "set_enter_msg",
                     "set_leave_msg",
                     "set_tp_location",
@@ -237,32 +209,35 @@ public class Commands implements TabExecutor {
                     "reload_cache",
                     "reload_config",
                     "export_mca",
-                    "config",
-                    "apply_template",
-                    "template_list",
-                    "template_manage",
-                    "template_delete",
-                    "template_create",
-                    "template_set_flag",
+                    "sys_config",
                     "all_dominion",
-                    "set_map_color"
+                    "set_map_color",
+                    "member",
+                    "group",
+                    "template"
             );
+        }
+        if (args.length > 1 && args[0].equals("member")) {
+            return Member.handleTab(sender, args);
+        }
+        if (args.length > 1 && args[0].equals("group")) {
+            return Group.handleTab(sender, args);
+        }
+        if (args.length > 1 && args[0].equals("template")) {
+            return Template.handleTab(sender, args);
         }
         if (args.length == 2) {
             switch (args[0]) {
                 case "help":
                 case "list":
-                case "config":
-                case "template_list":
-                    return Collections.singletonList("页码(可选)");
+                case "sys_config":
                 case "create":
                 case "auto_create":
                     return Collections.singletonList("输入领地名称");
                 case "delete":
                 case "info":
                 case "manage":
-                case "flag_info":
-                case "privilege_list":
+                case "guest_setting":
                 case "rename":
                 case "give":
                 case "set_tp_location":
@@ -271,12 +246,6 @@ public class Commands implements TabExecutor {
                     return DominionDTO.selectAllNames();
                 case "set":
                     return dominionFlags();
-                case "create_privilege":
-                case "set_privilege":
-                case "clear_privilege":
-                case "privilege_info":
-                case "apply_template":
-                    return playerNames();
                 case "expand":
                 case "contract":
                     return Collections.singletonList("大小(整数)");
@@ -287,12 +256,6 @@ public class Commands implements TabExecutor {
                     return Collections.singletonList("进入提示语内容");
                 case "set_leave_msg":
                     return Collections.singletonList("离开提示语内容");
-                case "template_manage":
-                case "template_delete":
-                case "template_set_flag":
-                    return allTemplates(sender);
-                case "template_create":
-                    return Collections.singletonList("输入模板名称");
                 case "set_map_color":
                     return Collections.singletonList("输入颜色(16进制)");
             }
@@ -301,48 +264,34 @@ public class Commands implements TabExecutor {
             switch (args[0]) {
                 case "set":
                     return boolOptions();
-                case "set_privilege":
-                case "template_set_flag":
-                    return playerPrivileges();
                 case "expand":
                 case "contract":
-                case "clear_privilege":
-                case "create_privilege":
-                case "privilege_info":
                 case "auto_create_sub":
                 case "create_sub":
                 case "set_enter_msg":
                 case "set_leave_msg":
-                case "apply_template":
                 case "set_map_color":
                     return playerDominions(sender);
                 case "rename":
                     return Collections.singletonList("输入新领地名称");
                 case "give":
                     return playerNames();
-                case "template_manage":
-                    return Collections.singletonList("页码(可选)");
             }
         }
         if (args.length == 4) {
             switch (args[0]) {
                 case "set":
                     return playerDominions(sender);
-                case "set_privilege":
-                case "template_set_flag":
-                    return boolOptions();
-                case "apply_template":
-                    return allTemplates(sender);
             }
         }
         return null;
     }
 
-    private static List<String> boolOptions() {
+    public static List<String> boolOptions() {
         return Arrays.asList("true", "false");
     }
 
-    private static List<String> playerNames() {
+    public static List<String> playerNames() {
         List<PlayerDTO> players = PlayerController.allPlayers();
         List<String> names = new ArrayList<>();
         for (PlayerDTO player : players) {

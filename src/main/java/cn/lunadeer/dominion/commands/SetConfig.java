@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.tuis.DominionConfig;
+import cn.lunadeer.dominion.tuis.SysConfig;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 
@@ -67,6 +67,9 @@ public class SetConfig {
             case "economy_refund":
                 setEconomyRefund(sender, args);
                 break;
+            case "residence_migration":
+                setResidenceMigration(sender, args);
+                break;
             default:
                 Notification.error(sender, "未知参数");
         }
@@ -78,7 +81,7 @@ public class SetConfig {
             String[] newArgs = new String[2];
             newArgs[0] = "config";
             newArgs[1] = String.valueOf(page);
-            DominionConfig.show(sender, newArgs);
+            SysConfig.show(sender, newArgs);
         }
     }
 
@@ -249,5 +252,11 @@ public class SetConfig {
         } else {
             Dominion.config.setEconomyRefund(economyRefund);
         }
+    }
+
+    private static void setResidenceMigration(CommandSender sender, String[] args) {
+        boolean residenceMigration = Boolean.parseBoolean(args[2]);
+        Dominion.config.setResidenceMigration(residenceMigration);
+        refreshPageOrNot(sender, args);
     }
 }

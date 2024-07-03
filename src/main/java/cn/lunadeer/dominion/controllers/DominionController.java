@@ -59,6 +59,22 @@ public class DominionController {
     public static void create(AbstractOperator operator, String name,
                               Location loc1, Location loc2,
                               String parent_dominion_name) {
+        create(operator, name, loc1, loc2, parent_dominion_name, false);
+    }
+
+    /**
+     * 创建子领地
+     *
+     * @param operator             拥有者
+     * @param name                 领地名称
+     * @param loc1                 位置1
+     * @param loc2                 位置2
+     * @param parent_dominion_name 父领地名称
+     * @param skipEco              是否跳过经济检查
+     */
+    public static void create(AbstractOperator operator, String name,
+                              Location loc1, Location loc2,
+                              String parent_dominion_name, boolean skipEco) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建领地失败");
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功创建领地 %s", name);
         if (name.isEmpty()) {

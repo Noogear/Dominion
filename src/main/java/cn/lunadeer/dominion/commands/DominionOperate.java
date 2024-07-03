@@ -8,6 +8,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.managers.GlobalTeleport;
+import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.Teleport;
@@ -372,7 +373,7 @@ public class DominionOperate {
             return;
         }
 
-        PlayerPrivilegeDTO privilegeDTO = PlayerPrivilegeDTO.select(player.getUniqueId(), dominionDTO.getId());
+        MemberDTO privilegeDTO = MemberDTO.select(player.getUniqueId(), dominionDTO.getId());
         if (!player.getUniqueId().equals(dominionDTO.getOwner())) { // 领地所有人可以传送到自己的领地
             if (privilegeDTO == null) {
                 if (!dominionDTO.getFlagValue(Flag.TELEPORT)) {

@@ -313,6 +313,20 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flag.DOOR, player, event);
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST) // dragon_egg
+    public void touchDragonEdd(PlayerInteractEvent event) {
+        Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
+        if (block.getType() != Material.DRAGON_EGG) {
+            return;
+        }
+        Player player = event.getPlayer();
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        checkFlag(dom, Flag.DRAGON_EGG, player, event);
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST) // dye
     public void dyeEvent(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();

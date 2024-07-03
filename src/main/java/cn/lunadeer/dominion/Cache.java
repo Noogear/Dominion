@@ -1,5 +1,7 @@
 package cn.lunadeer.dominion;
 
+import cn.lunadeer.dominion.dtos.*;
+import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
@@ -27,7 +29,8 @@ public class Cache {
     public Cache() {
         player_current_dominion_id = new HashMap<>();
         loadDominions();
-        loadPlayerPrivileges();
+        loadMembers();
+        loadGroups();
     }
 
     /**
@@ -106,53 +109,98 @@ public class Cache {
      *
      * @param player_uuid 玩家UUID
      */
-    public void loadPlayerPrivileges(UUID player_uuid) {
-        if (_last_update_privilege.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
-            XLogger.debug("run loadPlayerPrivilegesExecution directly");
-            loadPlayerPrivilegesExecution(player_uuid);
+    public void loadMembers(UUID player_uuid) {
+        if (_last_update_member.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
+            XLogger.debug("run loadMembersExecution directly");
+            loadMembersExecution(player_uuid);
         } else {
-            if (_update_privilege_is_scheduled.get()) return;
-            XLogger.debug("schedule loadPlayerPrivilegesExecution");
-            _update_privilege_is_scheduled.set(true);
-            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_privilege.get())) / 1000 * 20L;
+            if (_update_member_is_scheduled.get()) return;
+            XLogger.debug("schedule loadMembersExecution");
+            _update_member_is_scheduled.set(true);
+            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_member.get())) / 1000 * 20L;
             Scheduler.runTaskLaterAsync(() -> {
-                        XLogger.debug("run loadPlayerPrivilegesExecution scheduled");
-                        loadPlayerPrivilegesExecution(player_uuid);
-                        _update_privilege_is_scheduled.set(false);
+                        XLogger.debug("run loadMembersExecution scheduled");
+                        loadMembersExecution(player_uuid);
+                        _update_member_is_scheduled.set(false);
                     },
                     delay_tick);
         }
     }
 
-    public void loadPlayerPrivileges() {
-        loadPlayerPrivileges(null);
+    public void loadMembers() {
+        loadMembers(null);
     }
 
-    private void loadPlayerPrivilegesExecution(UUID player_to_update) {
+    private void loadMembersExecution(UUID player_to_update) {
         Scheduler.runTaskAsync(() -> {
             long start = System.currentTimeMillis();
-            List<PlayerPrivilegeDTO> all_privileges;
+            List<MemberDTO> all_privileges;
             if (player_to_update == null) {
-                all_privileges = PlayerPrivilegeDTO.selectAll();
-                player_uuid_to_privilege = new ConcurrentHashMap<>();
+                all_privileges = MemberDTO.selectAll();
+                player_uuid_to_member = new ConcurrentHashMap<>();
             } else {
-                all_privileges = PlayerPrivilegeDTO.selectAll(player_to_update);
-                if (!player_uuid_to_privilege.containsKey(player_to_update)) {
-                    player_uuid_to_privilege.put(player_to_update, new ConcurrentHashMap<>());
+                all_privileges = MemberDTO.selectAll(player_to_update);
+                if (!player_uuid_to_member.containsKey(player_to_update)) {
+                    player_uuid_to_member.put(player_to_update, new ConcurrentHashMap<>());
                 }
-                player_uuid_to_privilege.get(player_to_update).clear();
+                player_uuid_to_member.get(player_to_update).clear();
             }
-            for (PlayerPrivilegeDTO privilege : all_privileges) {
+            for (MemberDTO privilege : all_privileges) {
                 UUID player_uuid = privilege.getPlayerUUID();
-                if (!player_uuid_to_privilege.containsKey(player_uuid)) {
-                    player_uuid_to_privilege.put(player_uuid, new ConcurrentHashMap<>());
+                if (!player_uuid_to_member.containsKey(player_uuid)) {
+                    player_uuid_to_member.put(player_uuid, new ConcurrentHashMap<>());
                 }
-                player_uuid_to_privilege.get(player_uuid).put(privilege.getDomID(), privilege);
+                player_uuid_to_member.get(player_uuid).put(privilege.getDomID(), privilege);
             }
             recheckPlayerState = true;
-            _last_update_privilege.set(System.currentTimeMillis());
-            XLogger.debug("loadPlayerPrivilegesExecution cost: %d ms for %d privileges"
+            _last_update_member.set(System.currentTimeMillis());
+            XLogger.debug("loadMembersExecution cost: %d ms for %d privileges"
                     , System.currentTimeMillis() - start, all_privileges.size());
+        });
+    }
+
+    public void loadGroups() {
+        loadGroups(null);
+    }
+
+    public void loadGroups(Integer groupId) {
+        if (_last_update_group.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
+            XLogger.debug("run loadGroupsExecution directly");
+            loadGroupExecution(groupId);
+        } else {
+            if (_update_group_is_scheduled.get()) return;
+            XLogger.debug("schedule loadGroupsExecution");
+            _update_group_is_scheduled.set(true);
+            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_group.get())) / 1000 * 20L;
+            Scheduler.runTaskLaterAsync(() -> {
+                        XLogger.debug("run loadGroupsExecution scheduled");
+                        loadGroupExecution(groupId);
+                        _update_group_is_scheduled.set(false);
+                    },
+                    delay_tick);
+        }
+    }
+
+    private void loadGroupExecution(Integer groupId) {
+        Scheduler.runTaskAsync(() -> {
+            long start = System.currentTimeMillis();
+            if (groupId == null) {
+                id_groups = new ConcurrentHashMap<>();
+                List<GroupDTO> groups = GroupDTO.selectAll();
+                for (GroupDTO group : groups) {
+                    id_groups.put(group.getId(), group);
+                }
+            } else {
+                GroupDTO group = GroupDTO.select(groupId);
+                if (group == null && id_groups.containsKey(groupId)) {
+                    id_groups.remove(groupId);
+                } else if (group != null) {
+                    id_groups.put(groupId, group);
+                }
+            }
+            recheckPlayerState = true;
+            _last_update_group.set(System.currentTimeMillis());
+            XLogger.debug("loadGroupsExecution cost: %d ms", System.currentTimeMillis() - start);
         });
     }
 
@@ -240,9 +288,18 @@ public class Cache {
             player.setGlowing(false);
             return;
         }
-        PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
+        MemberDTO privilege = getMember(player, dominion);
         if (privilege != null) {
-            player.setGlowing(privilege.getFlagValue(Flag.GLOW));
+            if (privilege.getGroupId() == -1) {
+                player.setGlowing(privilege.getFlagValue(Flag.GLOW));
+            } else {
+                GroupDTO group = getGroup(privilege.getGroupId());
+                if (group != null) {
+                    player.setGlowing(group.getFlagValue(Flag.GLOW));
+                } else {
+                    player.setGlowing(dominion.getFlagValue(Flag.GLOW));
+                }
+            }
         } else {
             player.setGlowing(dominion.getFlagValue(Flag.GLOW));
         }
@@ -268,9 +325,18 @@ public class Cache {
             player.setAllowFlight(false);
             return;
         }
-        PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
+        MemberDTO privilege = getMember(player, dominion);
         if (privilege != null) {
-            player.setAllowFlight(privilege.getFlagValue(Flag.FLY));
+            if (privilege.getGroupId() == -1) {
+                player.setAllowFlight(privilege.getFlagValue(Flag.FLY));
+            } else {
+                GroupDTO group = getGroup(privilege.getGroupId());
+                if (group != null) {
+                    player.setAllowFlight(group.getFlagValue(Flag.FLY));
+                } else {
+                    player.setAllowFlight(dominion.getFlagValue(Flag.FLY));
+                }
+            }
         } else {
             player.setAllowFlight(dominion.getFlagValue(Flag.FLY));
         }
@@ -302,6 +368,10 @@ public class Cache {
         return dominionTree;
     }
 
+    public GroupDTO getGroup(Integer id) {
+        return id_groups.get(id);
+    }
+
     /**
      * 获取玩家在指定领地的特权
      * 如果玩家不存在特权，则返回null
@@ -310,14 +380,14 @@ public class Cache {
      * @param dominion 领地
      * @return 特权表
      */
-    public PlayerPrivilegeDTO getPlayerPrivilege(Player player, DominionDTO dominion) {
-        if (!player_uuid_to_privilege.containsKey(player.getUniqueId())) return null;
-        return player_uuid_to_privilege.get(player.getUniqueId()).get(dominion.getId());
+    public MemberDTO getMember(Player player, DominionDTO dominion) {
+        if (!player_uuid_to_member.containsKey(player.getUniqueId())) return null;
+        return player_uuid_to_member.get(player.getUniqueId()).get(dominion.getId());
     }
 
-    public PlayerPrivilegeDTO getPlayerPrivilege(UUID player_uuid, DominionDTO dominion) {
-        if (!player_uuid_to_privilege.containsKey(player_uuid)) return null;
-        return player_uuid_to_privilege.get(player_uuid).get(dominion.getId());
+    public MemberDTO getMember(UUID player_uuid, DominionDTO dominion) {
+        if (!player_uuid_to_member.containsKey(player_uuid)) return null;
+        return player_uuid_to_member.get(player_uuid).get(dominion.getId());
     }
 
     private static boolean isInDominion(@Nullable DominionDTO dominion, Player player) {
@@ -345,6 +415,25 @@ public class Cache {
         return count;
     }
 
+    public List<ResMigration.ResidenceNode> getResidenceData(UUID player_uuid) {
+        if (residence_data == null) {
+            residence_data = new HashMap<>();
+            List<ResMigration.ResidenceNode> residences = ResMigration.extractFromResidence(Dominion.instance);
+            for (ResMigration.ResidenceNode node : residences) {
+                if (node == null) {
+                    continue;
+                }
+                if (!residence_data.containsKey(node.owner)) {
+                    XLogger.debug("residence_data put %s", node.owner);
+                    residence_data.put(node.owner, new ArrayList<>());
+                }
+                residence_data.get(node.owner).add(node);
+            }
+            XLogger.debug("residence_data: %d", residence_data.size());
+        }
+        return residence_data.get(player_uuid);
+    }
+
     public List<DominionDTO> getDominions() {
         return new ArrayList<>(id_dominions.values());
     }
@@ -352,14 +441,19 @@ public class Cache {
     public static Cache instance;
     private ConcurrentHashMap<Integer, DominionDTO> id_dominions;
     private ConcurrentHashMap<String, List<DominionNode>> world_dominion_tree;
-    private ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, PlayerPrivilegeDTO>> player_uuid_to_privilege;   // 玩家所有的特权
+    private ConcurrentHashMap<Integer, GroupDTO> id_groups;
+    private ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, MemberDTO>> player_uuid_to_member;   // 玩家所有的特权
     private final Map<UUID, Integer> player_current_dominion_id;                         // 玩家当前所在领地
     private ConcurrentHashMap<Integer, List<Integer>> dominion_children;
     private final AtomicLong _last_update_dominion = new AtomicLong(0);
     private final AtomicBoolean _update_dominion_is_scheduled = new AtomicBoolean(false);
-    private final AtomicLong _last_update_privilege = new AtomicLong(0);
-    private final AtomicBoolean _update_privilege_is_scheduled = new AtomicBoolean(false);
+    private final AtomicLong _last_update_member = new AtomicLong(0);
+    private final AtomicBoolean _update_member_is_scheduled = new AtomicBoolean(false);
+    private final AtomicLong _last_update_group = new AtomicLong(0);
+    private final AtomicBoolean _update_group_is_scheduled = new AtomicBoolean(false);
     private static final long UPDATE_INTERVAL = 1000 * 4;
     private boolean recheckPlayerState = false;     // 是否需要重新检查玩家状态（发光、飞行）
     public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();
+
+    private Map<UUID, List<ResMigration.ResidenceNode>> residence_data = null;
 }
