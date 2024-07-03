@@ -157,7 +157,8 @@ public class DominionController {
             }
         }
         // 检查经济
-        handleEconomy(operator, Dominion.config.getEconomyOnlyXZ() ? dominion.getSquare() : dominion.getVolume(), true, FAIL, SUCCESS);
+        if (!skipEco)
+            handleEconomy(operator, Dominion.config.getEconomyOnlyXZ() ? dominion.getSquare() : dominion.getVolume(), true, FAIL, SUCCESS);
         dominion = DominionDTO.insert(dominion);
         if (dominion == null) {
             operator.setResponse(FAIL.addMessage("创建领地失败，数据库错误，请联系管理员"));
