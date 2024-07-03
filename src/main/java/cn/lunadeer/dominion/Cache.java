@@ -1,11 +1,8 @@
 package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.dtos.*;
-import cn.lunadeer.dominion.utils.ResMigration;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.managers.GlobalTeleport;
+import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import cn.lunadeer.minecraftpluginutils.Scheduler;

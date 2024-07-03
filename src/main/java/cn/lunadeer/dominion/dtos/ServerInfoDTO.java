@@ -5,8 +5,6 @@ import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.FieldType;
-import cn.lunadeer.minecraftpluginutils.databse.TableColumn;
-import cn.lunadeer.minecraftpluginutils.databse.syntax.CreateTable;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import com.alibaba.fastjson.JSONObject;
 import org.bukkit.plugin.java.JavaPlugin;

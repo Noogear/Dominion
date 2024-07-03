@@ -1,7 +1,6 @@
 package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.commands.DominionOperate;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.ServerInfoDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -10,6 +9,7 @@ import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
+import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.Location;
@@ -22,7 +22,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.sql.ResultSet;
 import java.util.Map;
@@ -79,7 +78,11 @@ public class GlobalTeleport implements PluginMessageListener, Listener {
      */
     @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
-
+        if (!channel.equals("BungeeCord")) {
+            return;
+        }
+        ByteArrayDataInput in = ByteStreams.newDataInput(message);
+        String subChannel = in.readUTF();
     }
 
     private void teleportToServer(Player player, DominionDTO dominionDTO) {

@@ -2,10 +2,6 @@ package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
-import cn.lunadeer.minecraftpluginutils.databse.Field;
-import cn.lunadeer.minecraftpluginutils.databse.FieldType;
-import cn.lunadeer.minecraftpluginutils.databse.TableColumn;
 import cn.lunadeer.minecraftpluginutils.databse.*;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.AddColumn;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.CreateTable;
