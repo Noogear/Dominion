@@ -27,7 +27,6 @@ public final class Dominion extends JavaPlugin {
         new Notification(this);
         new XLogger(this);
         config = new ConfigManager(this);
-        XLogger.setDebug(config.isDebug());
         new DatabaseManager(this,
                 DatabaseType.valueOf(config.getDbType().toUpperCase()),
                 config.getDbHost(),
@@ -39,9 +38,6 @@ public final class Dominion extends JavaPlugin {
         new Scheduler(this);
         AutoClean.run();
         Cache.instance = new Cache();
-        if (config.getEconomyEnable()) {
-            new VaultConnect(this);
-        }
 
         Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
         Bukkit.getPluginManager().registerEvents(new EnvironmentEvents(), this);
@@ -49,6 +45,8 @@ public final class Dominion extends JavaPlugin {
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
+        metrics.addCustomChart(new bStatsMetrics.SimplePie("database", () -> config.getDbType()));
+
         if (config.getCheckUpdate()) {
             giteaReleaseCheck = new GiteaReleaseCheck(this,
                     "https://ssl.lunadeer.cn:14446",
