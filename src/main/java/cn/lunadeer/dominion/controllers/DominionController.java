@@ -167,7 +167,6 @@ public class DominionController {
         }
         // 显示粒子效果
         handleParticle(operator, dominion.getWorld(), dominion.getX1(), dominion.getY1(), dominion.getZ1(), dominion.getX2(), dominion.getY2(), dominion.getZ2(), FAIL);
-        dominion.setParentDomId(parent_dominion.getId());
         operator.setResponse(SUCCESS);
     }
 
