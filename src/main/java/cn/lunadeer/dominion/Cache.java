@@ -252,7 +252,7 @@ public class Cache {
         player_current_dominion_id.put(player.getUniqueId(), current_dominion.getId());
         // show border
         if (current_dominion.getFlagValue(Flag.SHOW_BORDER)) {
-            ParticleRender.showBoxFace(Dominion.instance, player,
+            ParticleRender.showBoxFace(player,
                     current_dominion.getLocation1(),
                     current_dominion.getLocation2());
         }
@@ -432,6 +432,22 @@ public class Cache {
 
     public List<DominionDTO> getDominions() {
         return new ArrayList<>(id_dominions.values());
+    }
+
+    public int getDominionCounts() {
+        return id_dominions.size();
+    }
+
+    public int getMemberCounts() {
+        int count = 0;
+        for (Map<Integer, MemberDTO> member : player_uuid_to_member.values()) {
+            count += member.size();
+        }
+        return count;
+    }
+
+    public int getGroupCounts() {
+        return id_groups.size();
     }
 
     public static Cache instance;
