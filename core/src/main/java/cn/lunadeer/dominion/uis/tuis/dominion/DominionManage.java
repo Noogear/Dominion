@@ -25,6 +25,12 @@ public class DominionManage {
             return;
         }
         if (noAuthToManage(player, dominion)) return;
+
+        if (isBedRockPlayer(player)) {  // 基岩版玩家使用 BedrockUI
+            cn.lunadeer.dominion.uis.beuis.dominion.DominionManage.sendDominionManageMenu(player, dominion);
+            return;
+        }
+
         int page = getPage(args, 2);
         Line size_info = Line.create()
                 .append(Button.create(Translation.TUI_DominionManage_InfoButton).setExecuteCommand("/dominion info " + dominion.getName()).build())

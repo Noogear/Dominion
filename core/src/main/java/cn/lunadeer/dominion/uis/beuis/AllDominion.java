@@ -12,13 +12,7 @@ public class AllDominion {
     public static void sendAllDominionMenu(Player player){
 
         List<DominionNode> allDominions = DominionNode.BuildNodeTree(-1, DominionDTO.selectAll());
-
-
-        SimpleForm.Builder AllDominionMenu = SimpleForm.builder()
-                .title("所有领地");
-
-
-
+        CheckListMenu(player,allDominions,0);
 
     }
 

@@ -12,6 +12,7 @@ import java.util.List;
 
 import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
+import static cn.lunadeer.dominion.utils.TuiUtils.isBedRockPlayer;
 
 public class TemplateList {
 
@@ -26,6 +27,12 @@ public class TemplateList {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+
+        if (isBedRockPlayer(player)) {  // 基岩版玩家使用 BedrockUI
+            cn.lunadeer.dominion.uis.beuis.template.TemplateList.sendTemplateListMenu(player);
+            return;
+        }
+
         int page = getPage(args, 2);
         ListView view = ListView.create(10, "/dominion template list");
 

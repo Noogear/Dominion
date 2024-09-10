@@ -114,5 +114,6 @@ public class DominionList {
                     }
                 });
         GeyserApi.api().sendForm(player.getUniqueId(), ControlDominionMenu);
+
     }
 }
