@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
+import static cn.lunadeer.dominion.utils.TuiUtils.isBedRockPlayer;
 
 public class MigrateList {
 
@@ -30,6 +31,11 @@ public class MigrateList {
 
         if (!Dominion.config.getResidenceMigration()) {
             Notification.error(sender, Translation.Commands_Residence_MigrationDisabled);
+            return;
+        }
+
+        if (isBedRockPlayer(player)) {  // 基岩版玩家使用 BedrockUI
+            cn.lunadeer.dominion.uis.beuis.MigrateList.sendMigrateListMenu(player);
             return;
         }
 

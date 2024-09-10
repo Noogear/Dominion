@@ -14,6 +14,7 @@ import java.util.List;
 
 import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
+import static cn.lunadeer.dominion.utils.TuiUtils.isBedRockPlayer;
 
 public class TitleList {
 
@@ -25,6 +26,12 @@ public class TitleList {
         Player player = playerOnly(sender);
         if (player == null) return;
         int page = getPage(args, 1);
+
+        if (isBedRockPlayer(player)) {  // 基岩版玩家使用 BedrockUI
+            cn.lunadeer.dominion.uis.beuis.TitleList.sendTitleMenu(player);
+            return;
+        }
+
         ListView view = ListView.create(10, "/dominion title_list");
 
         view.title(Translation.TUI_TitleList_Title);

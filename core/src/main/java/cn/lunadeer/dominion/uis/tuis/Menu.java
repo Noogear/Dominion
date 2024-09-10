@@ -11,11 +11,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
+import static cn.lunadeer.dominion.utils.TuiUtils.isBedRockPlayer;
 
 public class Menu {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+
+        if (isBedRockPlayer(player)) {  // 基岩版玩家使用 BedrockUI
+            cn.lunadeer.dominion.uis.beuis.Menu.sendMainMenu(player);
+            return;
+        }
 
         int page = 1;
         if (args.length == 2) {

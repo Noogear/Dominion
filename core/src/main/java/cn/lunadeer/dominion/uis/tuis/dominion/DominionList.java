@@ -18,11 +18,18 @@ import java.util.List;
 import static cn.lunadeer.dominion.commands.Helper.playerAdminDominions;
 import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
+import static cn.lunadeer.dominion.utils.TuiUtils.isBedRockPlayer;
 
 public class DominionList {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+
+        if (isBedRockPlayer(player)) {  // 基岩版玩家使用 BedrockUI
+            cn.lunadeer.dominion.uis.beuis.dominion.DominionList.sendDominionMenu(player);
+            return;
+        }
+
         int page = getPage(args, 1);
         ListView view = ListView.create(10, "/dominion list");
 

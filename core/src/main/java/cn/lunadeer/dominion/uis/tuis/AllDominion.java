@@ -13,8 +13,7 @@ import java.util.List;
 
 import static cn.lunadeer.dominion.uis.tuis.dominion.DominionList.BuildTreeLines;
 import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
-import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
-import static cn.lunadeer.dominion.utils.TuiUtils.notOp;
+import static cn.lunadeer.dominion.utils.TuiUtils.*;
 
 public class AllDominion {
 
@@ -22,6 +21,12 @@ public class AllDominion {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (notOp(player)) return;
+
+        if (isBedRockPlayer(player)) {  // 基岩版玩家使用 BedrockUI
+            cn.lunadeer.dominion.uis.beuis.AllDominion.sendAllDominionMenu(player);
+            return;
+        }
+
         int page = getPage(args, 1);
 
         List<DominionNode> allDominions = DominionNode.BuildNodeTree(-1, DominionDTO.selectAll());
