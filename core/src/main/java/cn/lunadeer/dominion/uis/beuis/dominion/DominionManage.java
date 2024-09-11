@@ -7,7 +7,6 @@ import org.geysermc.cumulus.form.SimpleForm;
 import org.geysermc.geyser.api.GeyserApi;
 
 public class DominionManage {
-    //player.performCommand("dominion manager "+response.clickedButton().text());
     public static void sendDominionManageMenu(Player player, DominionDTO dominion) {
         SimpleForm.Builder DominionManageMenu = SimpleForm.builder()
                 .title("领地管理")

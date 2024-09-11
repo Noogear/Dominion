@@ -3,9 +3,10 @@ package cn.lunadeer.dominion.uis.beuis;
 import cn.lunadeer.dominion.DominionNode;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import org.bukkit.entity.Player;
-import org.geysermc.cumulus.form.SimpleForm;
 
 import java.util.List;
+
+import static cn.lunadeer.dominion.uis.beuis.dominion.DominionList.CheckListMenu;
 
 public class AllDominion {
 
@@ -15,5 +16,4 @@ public class AllDominion {
         CheckListMenu(player,allDominions,0);
 
     }
-
 }
