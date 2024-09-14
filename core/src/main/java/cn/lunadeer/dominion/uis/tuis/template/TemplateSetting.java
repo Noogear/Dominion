@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
+import static cn.lunadeer.dominion.utils.TuiUtils.isBedRockPlayer;
 
 public class TemplateSetting {
 
@@ -32,6 +33,11 @@ public class TemplateSetting {
         PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(player.getUniqueId(), args[2]);
         if (template == null) {
             Notification.error(sender, Translation.Messages_TemplateNotExist, args[2]);
+            return;
+        }
+
+        if (isBedRockPlayer(player)) {  // 基岩版玩家使用 BedrockUI
+            cn.lunadeer.dominion.uis.beuis.template.TemplateSetting.sendTemplateSetting(player, template);
             return;
         }
 

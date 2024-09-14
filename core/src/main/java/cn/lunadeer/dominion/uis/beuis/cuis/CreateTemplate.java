@@ -13,7 +13,7 @@ public class CreateTemplate {
 
         CustomForm.Builder CreateTemplateMenu = CustomForm.builder()
                 .title("创建模板")
-                .input("输入要创建的领地名称")
+                .input("输入要创建的模板名称")
                 .closedOrInvalidResultHandler(response -> sendTemplateListMenu(player))
                 .validResultHandler(response -> {
                     String input = response.asInput();
