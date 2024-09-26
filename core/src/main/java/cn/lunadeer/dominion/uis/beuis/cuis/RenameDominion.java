@@ -19,8 +19,8 @@ public class RenameDominion {
                 .closedOrInvalidResultHandler(response -> sendDominionManageMenu(player, dominion))
                 .validResultHandler(response -> {
                     String input = response.asInput();
-                    if(input != null && !input.isEmpty()) {
-                        input = input.replaceAll(" ","_");
+                    if (input != null && !input.isEmpty()) {
+                        input = input.replaceAll(" ", "_");
                         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
                         DominionController.rename(operator, dominion.getName(), input);
                         sendDominionManageMenu(player, getDominionNameArg_1(player, new String[]{"manage", input}));

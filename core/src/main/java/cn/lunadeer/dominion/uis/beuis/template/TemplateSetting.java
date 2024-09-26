@@ -22,8 +22,8 @@ public class TemplateSetting {
             templateSettingMenu.toggle(flag.getDisplayName(), template.getFlagValue(flag));
         }
         templateSettingMenu.validResultHandler(response -> {
-            if(template.getAdmin().equals(response.asToggle(0))){
-            player.performCommand("dominion template set_flag " + template.getName() + " admin "+ (response.asToggle(0) ? "true" : "false"));
+            if (template.getAdmin().equals(response.asToggle(0))) {
+                player.performCommand("dominion template set_flag " + template.getName() + " admin " + (response.asToggle(0) ? "true" : "false"));
             }
             int i = 1;
             for (Flag flag : flags) {

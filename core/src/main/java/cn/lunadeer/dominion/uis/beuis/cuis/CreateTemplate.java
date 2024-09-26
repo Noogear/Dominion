@@ -17,8 +17,8 @@ public class CreateTemplate {
                 .closedOrInvalidResultHandler(response -> sendTemplateListMenu(player))
                 .validResultHandler(response -> {
                     String input = response.asInput();
-                    if(input != null && !input.isEmpty()) {
-                        input = input.replaceAll(" ","_");
+                    if (input != null && !input.isEmpty()) {
+                        input = input.replaceAll(" ", "_");
                         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
                         TemplateController.createTemplate(operator, input.replaceAll(" ", "_"));
                         sendTemplateListMenu(player);

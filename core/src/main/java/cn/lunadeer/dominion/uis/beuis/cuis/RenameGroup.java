@@ -19,8 +19,8 @@ public class RenameGroup {
                 .closedOrInvalidResultHandler(response -> sendDominionManageMenu(player, dominion))
                 .validResultHandler(response -> {
                     String input = response.asInput();
-                    if(input != null && !input.isEmpty()) {
-                        input = input.replaceAll(" ","_");
+                    if (input != null && !input.isEmpty()) {
+                        input = input.replaceAll(" ", "_");
                         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
                         GroupController.renameGroup(operator, dominion.getName(), oldName, ColorParser.getPlainText(input), input);
                         //发送权限组设置菜单

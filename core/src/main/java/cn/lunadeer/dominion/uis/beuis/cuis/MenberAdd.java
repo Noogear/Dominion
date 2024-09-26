@@ -18,8 +18,8 @@ public class MenberAdd {
                 .closedOrInvalidResultHandler(response -> sendTemplateListMenu(player))
                 .validResultHandler(response -> {
                     String input = response.asInput();
-                    if(input != null && !input.isEmpty()) {
-                        input = input.replaceAll(" ","_");
+                    if (input != null && !input.isEmpty()) {
+                        input = input.replaceAll(" ", "_");
                         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
                         //这里还缺一块代码，不知道啥作用
                         MemberController.memberAdd(operator, dominion.getName(), input);

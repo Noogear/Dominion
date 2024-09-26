@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.geyser.api.GeyserApi;
 
+import java.util.List;
+
 import static cn.lunadeer.dominion.uis.beuis.dominion.DominionManage.sendDominionManageMenu;
 
 public class EnvSetting {
@@ -13,14 +15,15 @@ public class EnvSetting {
 
         CustomForm.Builder EnvSettingMenu = CustomForm.builder()
                 .title("环境设置")
-                .closedOrInvalidResultHandler(response -> sendDominionManageMenu(player,dominion));
-        for (Flag flag : Flag.getDominionOnlyFlagsEnabled()) {
-            EnvSettingMenu.toggle(flag.getFlagName(),dominion.getFlagValue(flag));
+                .closedOrInvalidResultHandler(response -> sendDominionManageMenu(player, dominion));
+        List<Flag> flags = Flag.getDominionOnlyFlagsEnabled();
+        for (Flag flag : flags) {
+            EnvSettingMenu.toggle(flag.getFlagName(), dominion.getFlagValue(flag));
         }
         EnvSettingMenu.validResultHandler(response -> {
             int i = 0;
-            for (Flag flag : Flag.getDominionOnlyFlagsEnabled()) {
-                if(!dominion.getFlagValue(flag).equals(response.asToggle(i))){
+            for (Flag flag : flags) {
+                if (!dominion.getFlagValue(flag).equals(response.asToggle(i))) {
                     player.performCommand("dominion set" + flag.getFlagName() + " " + (response.asToggle(i) ? "true" : "false") + " " + dominion.getName());
                 }
                 i++;

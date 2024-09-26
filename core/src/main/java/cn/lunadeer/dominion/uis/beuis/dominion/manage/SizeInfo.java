@@ -21,16 +21,16 @@ public class SizeInfo {
 
         String context =
                 "领地所有者：" + owner.getLastKnownName() + "\n" +
-                "领地大小：" + dominion.getWidthX() + " x " + dominion.getHeight() + " x " + dominion.getWidthZ() + "\n" +
-                "中心坐标：" + (x1 + (x2 - x1) / 2) + " " + (y1 + (y2 - y1) / 2) + " " + (z1 + (z2 - z1) / 2) + "\n" +
-                "垂直高度：" + dominion.getHeight() + "\n" +
-                "Y轴坐标：" + y1 + " ~ " + y2 + "\n" +
-                "水平面积：" + dominion.getSquare() + "\n" +
-                "领地体积：" + dominion.getVolume() + "\n" +
-                "传送点坐标：" +
-                (dominion.getTpLocation() == null ?
-                        "无" :
-                        dominion.getTpLocation().getX() + " " + dominion.getTpLocation().getY() + " " + dominion.getTpLocation().getZ());
+                        "领地大小：" + dominion.getWidthX() + " x " + dominion.getHeight() + " x " + dominion.getWidthZ() + "\n" +
+                        "中心坐标：" + (x1 + (x2 - x1) / 2) + " " + (y1 + (y2 - y1) / 2) + " " + (z1 + (z2 - z1) / 2) + "\n" +
+                        "垂直高度：" + dominion.getHeight() + "\n" +
+                        "Y轴坐标：" + y1 + " ~ " + y2 + "\n" +
+                        "水平面积：" + dominion.getSquare() + "\n" +
+                        "领地体积：" + dominion.getVolume() + "\n" +
+                        "传送点坐标：" +
+                        (dominion.getTpLocation() == null ?
+                                "无" :
+                                dominion.getTpLocation().getX() + " " + dominion.getTpLocation().getY() + " " + dominion.getTpLocation().getZ());
 
         SimpleForm.Builder SizeInfoMenu = SimpleForm.builder()
                 .title("领地 " + dominion.getName() + " 的尺寸信息")

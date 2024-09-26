@@ -18,8 +18,8 @@ public class CreateGroup {
                 .closedOrInvalidResultHandler(response -> sendMainMenu(player))
                 .validResultHandler(response -> {
                     String input = response.asInput();
-                    if(input != null && !input.isEmpty()) {
-                        input = input.replaceAll(" ","_");
+                    if (input != null && !input.isEmpty()) {
+                        input = input.replaceAll(" ", "_");
                         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
                         GroupController.createGroup(operator, dominion.getName(), ColorParser.getPlainText(input), input);
                         //发送权限组列表菜单，未写

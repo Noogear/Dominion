@@ -26,8 +26,8 @@ public class CreateDominion {
                 .closedOrInvalidResultHandler(response -> sendMainMenu(player))
                 .validResultHandler(response -> {
                     String input = response.asInput();
-                    if(input != null && !input.isEmpty()) {
-                        input = input.replaceAll(" ","_");
+                    if (input != null && !input.isEmpty()) {
+                        input = input.replaceAll(" ", "_");
                         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
                         Map<Integer, Location> points = autoPoints(player);
                         operator.getResponse().thenAccept(result -> {

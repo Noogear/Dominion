@@ -13,14 +13,14 @@ public class GuestSetting {
 
         CustomForm.Builder GuestSettingMenu = CustomForm.builder()
                 .title("访客权限")
-                .closedOrInvalidResultHandler(response -> sendDominionManageMenu(player,dominion));
+                .closedOrInvalidResultHandler(response -> sendDominionManageMenu(player, dominion));
         for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
-            GuestSettingMenu.toggle(flag.getFlagName(),dominion.getFlagValue(flag));
+            GuestSettingMenu.toggle(flag.getFlagName(), dominion.getFlagValue(flag));
         }
         GuestSettingMenu.validResultHandler(response -> {
             int i = 0;
             for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
-                if(!dominion.getFlagValue(flag).equals(response.asToggle(i))){
+                if (!dominion.getFlagValue(flag).equals(response.asToggle(i))) {
                     player.performCommand("dominion set" + flag.getFlagName() + " " + (response.asToggle(i) ? "true" : "false") + " " + dominion.getName());
                 }
                 i++;

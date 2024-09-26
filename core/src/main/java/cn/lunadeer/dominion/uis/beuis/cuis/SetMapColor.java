@@ -2,9 +2,7 @@ package cn.lunadeer.dominion.uis.beuis.cuis;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
-import cn.lunadeer.dominion.controllers.GroupController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.minecraftpluginutils.ColorParser;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.geyser.api.GeyserApi;
@@ -20,8 +18,8 @@ public class SetMapColor {
                 .closedOrInvalidResultHandler(response -> sendDominionManageMenu(player, dominion))
                 .validResultHandler(response -> {
                     String input = response.asInput();
-                    if(input != null && !input.isEmpty()) {
-                        input = input.replaceAll(" ","_");
+                    if (input != null && !input.isEmpty()) {
+                        input = input.replaceAll(" ", "_");
                         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
                         DominionController.setMapColor(operator, input, dominion.getName());
                         sendDominionManageMenu(player, dominion);
