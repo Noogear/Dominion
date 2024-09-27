@@ -23,12 +23,12 @@ public class TemplateSetting {
         }
         templateSettingMenu.validResultHandler(response -> {
             if (template.getAdmin().equals(response.asToggle(0))) {
-                player.performCommand("dominion template set_flag " + template.getName() + " admin " + (response.asToggle(0) ? "true" : "false"));
+                player.performCommand(String.format("dominion template set_flag %s admin %b", template.getName(), response.asToggle(0)));
             }
             int i = 1;
             for (Flag flag : flags) {
                 if (!template.getFlagValue(flag).equals(response.asToggle(i))) {
-                    player.performCommand("dominion template set_flag " + template.getName() + " " + flag.getFlagName() + " " + (response.asToggle(i) ? "true" : "false"));
+                    player.performCommand(String.format("dominion template set_flag %s %s %b", template.getName(), flag.getFlagName(), response.asToggle(i)));
                 }
                 i++;
             }

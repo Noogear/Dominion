@@ -24,7 +24,7 @@ public class EnvSetting {
             int i = 0;
             for (Flag flag : flags) {
                 if (!dominion.getFlagValue(flag).equals(response.asToggle(i))) {
-                    player.performCommand("dominion set" + flag.getFlagName() + " " + (response.asToggle(i) ? "true" : "false") + " " + dominion.getName());
+                    player.performCommand(String.format("dominion set %s %b %s", flag.getFlagName(), response.asToggle(i), dominion.getName()));
                 }
                 i++;
             }

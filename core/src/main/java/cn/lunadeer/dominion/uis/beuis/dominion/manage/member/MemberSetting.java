@@ -42,7 +42,7 @@ public class MemberSetting {
                 int i = 1;
                 for (final Flag flag : flags) {
                     if (!privilege.getFlagValue(flag).equals(response.asToggle(i))) {
-                        player.performCommand(String.format("dominion member set_flag %s %s %s %s", dominion.getName(), playerDTO.getLastKnownName(), flag.getFlagName(), (response.asToggle(i) ? "true" : "false")));
+                        player.performCommand(String.format("dominion member set_flag %s %s %s %b", dominion.getName(), playerDTO.getLastKnownName(), flag.getFlagName(), response.asToggle(i)));
                     }
                     i++;
                 }
@@ -56,7 +56,7 @@ public class MemberSetting {
                 int i = 0;
                 for (Flag flag : flags) {
                     if (!privilege.getFlagValue(flag).equals(response.asToggle(i))) {
-                        player.performCommand(String.format("dominion member set_flag %s %s %s %s", dominion.getName(), playerDTO.getLastKnownName(), flag.getFlagName(), (response.asToggle(i) ? "true" : "false")));
+                        player.performCommand(String.format("dominion member set_flag %s %s %s %b", dominion.getName(), playerDTO.getLastKnownName(), flag.getFlagName(), response.asToggle(i)));
                     }
                     i++;
                 }
